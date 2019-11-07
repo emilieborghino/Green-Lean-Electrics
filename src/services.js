@@ -1,29 +1,33 @@
-
 exports.getWindSpeed = function (date) {
-
-    const response = {
+    return {
         "windSpeed": 42
     };
-
-    return response;
 };
 
 
 exports.getElectricityConsumption = function (date) {
-
-    const response = {
+    return {
         "electricityConsumption": 42
     };
-
-    return response;
 };
 
 
 exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption) {
+    const windSpeedCoeff = -1;
+    const consumptionCaff = 1 / 10;
 
-    const response = {
-        "currentElectricityPrice": 42
+    const maxPrice = 2;
+    const minPrice = 1;
+
+    const price = Math.min(
+        Math.max(
+            consumptionCaff * electricityConsumption + windSpeedCoeff * Math.log(windSpeed),
+            maxPrice
+        ),
+        minPrice
+    );
+
+    return {
+        "currentElectricityPrice": price
     };
-
-    return response;
 };
