@@ -213,7 +213,7 @@
     // Actual part of code
     const windPointsNumber = 1000;
     const minWindSpeed = 0;
-    const maxWindSpeed = 1000;
+    const maxWindSpeed = 2000;
 
     let windSpeeds = [];
 
@@ -222,22 +222,21 @@
         const yearStart = new Date(now.getFullYear(), 0).getTime();
         const yearEnd = new Date(now.getFullYear(), 11, 31).getTime();
         const hoursInYear = (yearEnd - yearStart) / 1000 / 60 / 60;
-        const step = hoursInYear / XSTEP;
+        const step = hoursInYear / XSTEP / 8;
         let windSpeed = [...Array(windPointsNumber).keys()]
             .map(point => point * step)
-            .map(point => maxWindSpeed * gaussianFunction(point * Math.cos(x), 1000, x))
+            .map(point => maxWindSpeed * (1 + Math.cos(x)) * gaussianFunction(0, 8000, x - point * Math.cos(x)))
             .reduce((accumulator, currentValue) => accumulator + currentValue);
-        // console.log(x * step, windSpeed);
         windSpeeds.push(windSpeed);
         return windSpeed;
     }
 
     const gaussianFunction = (expectedValue, standardValue, x) => {
         // console.log(expectedValue, standardValue);
-        return 1.0 / (standardValue * Math.sqrt(2 * Math.PI))
+        return 1.0 / (standardValue * Math.sqrt(2.0 * Math.PI))
             * Math.exp(
-                -Math.pow(x - expectedValue, 2)
-                / (2 * Math.pow(standardValue, 2))
+                -Math.pow(x - expectedValue, 2.0)
+                / (2.0 * Math.pow(standardValue, 2.0))
             );
     };
 
@@ -247,7 +246,7 @@
         windSpeeds.sort((a,b) => b-a);
 
         console.log("Max speed", windSpeeds[0]);
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 10; i >= 1; i--) {
             console.log("Number of speed < " + i * 10, windSpeeds.filter(x => x < i * 10).length);
         }
 
