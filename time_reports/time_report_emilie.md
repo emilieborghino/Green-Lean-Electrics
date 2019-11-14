@@ -15,3 +15,5 @@
 | 2019-11-07  | 0.5     | Research datas on the current electricity consumption for a single house |
 | 2019-11-07  | 1.5     | Implement the calcultation for electricity consumption (Fix a bug : we had only 14kwh for 10 houses for 1 day instead of ~250 expected) |
 | 2019-11-07  | 0.5     | Reflect on the electricity price calculation and implement it |
+|2019-11-09	|1	|Research on the speed wind calculation|
+|2019-11-09	|2	|Implement the calcultation for wind speed|
