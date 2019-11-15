@@ -12,3 +12,5 @@
 | 2019-11-09  | 1       | Research to build up a coherent wind model    |
 | 2019-11-09  | 2       | Implementation of the wind model              |
 | 2019-11-14  | 0.15    | Meeting                                       |
+| 2019-11-15  | 0.15    | Fix price computation                         |
+| 2019-11-15  | 1       | Set up MondoDB server                         |

@@ -7,8 +7,8 @@ const routes = {
     '/getWindSpeed': (service) => service.getWindSpeed(new Date()),
     '/getElectricityConsumption': (service) => service.getElectricityConsumption(new Date()),
     '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(
-        service.getWindSpeed(new Date()),
-        service.getElectricityConsumption(new Date())
+        service.getWindSpeed(new Date()).windSpeed,
+        service.getElectricityConsumption(new Date()).electricityConsumption
     )
 };
 

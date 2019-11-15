@@ -72,18 +72,20 @@ exports.getElectricityConsumption = function (date) {
 
 exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption) {
     const windSpeedCoeff = -1;
-    const consumptionCaff = 1 / 10;
+    const consumptionCoeff = 500;
 
     const maxPrice = 2;
     const minPrice = 1;
 
-    const price = Math.min(
-        Math.max(
-            consumptionCaff * electricityConsumption + windSpeedCoeff * Math.log(windSpeed),
+    const price = Math.max(
+        Math.min(
+            consumptionCoeff * electricityConsumption + windSpeedCoeff * Math.log(windSpeed),
             maxPrice
         ),
         minPrice
     );
+
+    console.log(consumptionCoeff * electricityConsumption + windSpeedCoeff * Math.log(windSpeed));
 
     return {
         "currentElectricityPrice": price
