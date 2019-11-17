@@ -105,13 +105,29 @@ exports.insertProsumer = function (email, pwd){
            console.log(err);
            process.exit(0);
         }
+        
         var dbo = db.db('greenleanelectrics');
         var collection = dbo.collection('prosumers');
+
         var prosumer = {
             "email": email,
             "pwd": pwd
         };
-        collection.insertOne(prosumer);
+
+        collection.find({"email": email}).toArray((err, results) => {
+            if(err) {
+                console.log(err);
+                process.exit(0);
+            }
+
+            if(results.length == 0)
+                collection.insertOne(prosumer);
+            else
+                console.log("Email already used");
+
+            db.close();
+        });
+
             /*return {
                 "status": true,
                 "message": "inserted record"+response.ops[0]
