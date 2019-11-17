@@ -99,58 +99,42 @@ exports.insertProsumer = function (email, password) {
         .insertOne(undefined, databaseName, collectionName, prosumer);
 };
 
-exports.prosumerLogin = function (email, pwd){
-    /*console.log("email : " + email);
-    console.log("pwd : " + pwd);*/
+exports.connectProsumer = function (email, password) {
+    const databaseName = 'greenleanelectrics';
+    const collectionName = 'prosumers';
 
-    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
-        if(err) {
-            console.log(err);
-            process.exit(0);
-        }
+    const prosumer = {
+        email,
+        password
+    };
+    const token = generateToken();
+    const updateOperation = {$set: {token}};
 
-        var dbo = db.db('greenleanelectrics');
-        var collection = dbo.collection('prosumers');
-
-        var prosumer = {
-            "email": email,
-            "pwd": pwd
-        };
-
-        var userToken = generateToken();
-        collection.updateOne(prosumer, {$set: {token:userToken}});
-        console.log("User connected with token : " + userToken);
-        db.close();
-
-    });
-}
-
-exports.prosumerLogout = function (token){
-    /*console.log("email : " + email);
-    console.log("pwd : " + pwd);*/
-
-    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
-        if(err) {
-            console.log(err);
-            process.exit(0);
-        }
-
-        var dbo = db.db('greenleanelectrics');
-        var collection = dbo.collection('prosumers');
-
-        var prosumer = {
-            "token": token
-        };
-
-        collection.updateOne(prosumer, {$set: {token:null}});
-        console.log("User disconnected");
-        db.close();
-    });
-}
-var rand = function() {
-    return Math.random().toString(36).substr(2);
+    return require('./mongo.js')
+        .updateOne(undefined, databaseName, collectionName, prosumer, updateOperation)
+        .then(() => {
+            console.log(`User connected with token '${token}'`);
+            return token;
+        });
 };
 
-var generateToken = function() {
-    return rand() + rand();
+exports.disconnectProsumer = function (token) {
+    const databaseName = 'greenleanelectrics';
+    const collectionName = 'prosumers';
+    const prosumer = {
+        token
+    };
+    const updateOperation = {$set: {token: null}};
+
+    return require('./mongo.js')
+        .updateOne(undefined, databaseName, collectionName, prosumer, updateOperation)
+        .then(() => {
+            console.log(`User connected with token '${token}' has been disconnected`);
+            return token;
+        });
 };
+
+function generateToken () {
+    const crypto = require("crypto");
+    return crypto.randomBytes(16).toString("hex");
+}

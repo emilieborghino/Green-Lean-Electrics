@@ -16,12 +16,12 @@ const routes = {
             getPostParam(url.parse(request.url).query, 'password')
         ),
     '/prosumerLogin': (service,request) => 
-        service.prosumerLogin(
+        service.connectProsumer(
             getPostParam(url.parse(request.url).query, 'email'),
             getPostParam(url.parse(request.url).query, 'pwd')
         ),
     '/prosumerLogout': (service,request) => 
-        service.prosumerLogout(
+        service.disconnectProsumer(
             getPostParam(url.parse(request.url).query, 'token')
         ),
 };
