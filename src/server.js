@@ -10,7 +10,10 @@ const routes = {
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
     ),
-    '/prosumerSignUp': (service) => service.insertProsumer(/*..*/),
+    '/prosumerSignUp': (service,request) => service.insertProsumer(
+        getPostParam('email',request.query),
+        getPostParam('pwd',request.query)
+    ),
 };
 
 const server = http.createServer(function (req, res) {
@@ -35,6 +38,16 @@ function writeReply(response, res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(response));
+}
+
+function getPostParam(paramName, query){
+    var params = query.split('&');
+    for (var i = 0; i < params.length; i++) {
+      var data = params[i].split('=');
+        if(data[0] === paramName)
+            return data[1];
+    }
+    return null;
 }
 
 server.listen(port);
