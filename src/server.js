@@ -4,9 +4,9 @@ const url = require('url');
 const port = 8080;
 
 const routes = {
-    '/getWindSpeed': (service) => service.getWindSpeed(new Date()),
-    '/getElectricityConsumption': (service) => service.getElectricityConsumption(new Date()),
-    '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(
+    '/getWindSpeed': (service, request) => service.getWindSpeed(new Date()),
+    '/getElectricityConsumption': (service, request) => service.getElectricityConsumption(new Date()),
+    '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
     )
@@ -21,8 +21,9 @@ const server = http.createServer(function (req, res) {
         console.log('Request Type:' + req.method + ' Endpoint: ' + reqUrl.pathname);
 
         const route = routes[reqUrl.pathname];
+        const reply = route(service, req);
         if (route) {
-            writeReply(route(service), res);
+            writeReply(reply, res);
         } else {
             // TODO: add an error message
         }
