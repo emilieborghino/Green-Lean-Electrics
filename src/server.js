@@ -9,7 +9,8 @@ const routes = {
     '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
-    )
+    ),
+    '/prosumerSignUp': (service) => service.insertProsumer(/*..*/),
 };
 
 const server = http.createServer(function (req, res) {
@@ -36,3 +37,25 @@ function writeReply(response, res) {
 }
 
 server.listen(port);
+
+// Data Base
+
+const mongo = require('mongodb');
+const mongourl = "mongodb://localhost:27017";
+
+mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
+    if(err) {
+       console.log(err);
+       process.exit(0);
+    }
+    console.log('database connected!');
+    var dbo = db.db('greenleanelectrics');
+    dbo.createCollection('prosumers', (err, result) => {
+        if(err) {
+           console.log(err);
+           process.exit(0);
+        }
+        console.log('collection created!');
+        db.close();
+    });
+});

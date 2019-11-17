@@ -91,3 +91,8 @@ exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption
         "currentElectricityPrice": price
     };
 };
+
+// DataBase
+exports.insertProsumer = function (/*..*/){
+
+}
