@@ -15,6 +15,15 @@ const routes = {
             getPostParam(url.parse(request.url).query, 'email'),
             getPostParam(url.parse(request.url).query, 'pwd')
         ),
+    '/prosumerLogin': (service,request) => 
+        service.prosumerLogin(
+            getPostParam(url.parse(request.url).query, 'email'),
+            getPostParam(url.parse(request.url).query, 'pwd')
+        ),
+    '/prosumerLogout': (service,request) => 
+        service.prosumerLogout(
+            getPostParam(url.parse(request.url).query, 'token')
+        ),
 };
 
 const server = http.createServer(function (req, res) {

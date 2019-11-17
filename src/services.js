@@ -105,7 +105,7 @@ exports.insertProsumer = function (email, pwd){
            console.log(err);
            process.exit(0);
         }
-        
+
         var dbo = db.db('greenleanelectrics');
         var collection = dbo.collection('prosumers');
 
@@ -138,3 +138,59 @@ exports.insertProsumer = function (email, pwd){
             }; */
     });
 }
+
+exports.prosumerLogin = function (email, pwd){
+    /*console.log("email : " + email);
+    console.log("pwd : " + pwd);*/
+
+    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
+        if(err) {
+           console.log(err);
+           process.exit(0);
+        }
+        
+        var dbo = db.db('greenleanelectrics');
+        var collection = dbo.collection('prosumers');
+
+        var prosumer = {
+            "email": email,
+            "pwd": pwd
+        };
+
+        var userToken = generateToken();
+        collection.updateOne(prosumer, {$set: {token:userToken}});
+        console.log("User connected with token : " + userToken);
+        db.close();
+
+    });
+}
+
+exports.prosumerLogout = function (token){
+    /*console.log("email : " + email);
+    console.log("pwd : " + pwd);*/
+
+    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
+        if(err) {
+           console.log(err);
+           process.exit(0);
+        }
+        
+        var dbo = db.db('greenleanelectrics');
+        var collection = dbo.collection('prosumers');
+
+        var prosumer = {
+            "token": token
+        };
+
+        collection.updateOne(prosumer, {$set: {token:null}});
+        console.log("User disconnected");
+        db.close();
+    });
+}
+var rand = function() {
+    return Math.random().toString(36).substr(2);
+};
+
+var generateToken = function() {
+    return rand() + rand();
+};
