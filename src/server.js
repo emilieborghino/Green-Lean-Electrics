@@ -9,7 +9,11 @@ const routes = {
     '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
-    )
+    ),
+    '/prosumerSignUp': (service,request) => {
+        /** Récupération des paramètres **/
+        service.insertProsumer(/*..*/);
+    },
 };
 
 const server = http.createServer(function (req, res) {
@@ -17,7 +21,7 @@ const server = http.createServer(function (req, res) {
     const service = require('./services.js');
 
     // GET Endpoint
-    if (req.method === 'GET') {
+    if (req.method === 'GET' || req.method === 'POST') {
         console.log('Request Type:' + req.method + ' Endpoint: ' + reqUrl.pathname);
 
         const route = routes[reqUrl.pathname];
