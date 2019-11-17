@@ -39,5 +39,5 @@ exports.find = function (url, databaseName, collectionName, predicate) {
 };
 
 exports.updateOne = function (url, databaseName, collectionName, object, updateOperations) {
-    return operate(url, databaseName, collectionName, collection => collection.updateOne(object, updateOperations));
+    return operate(url, databaseName, collectionName, collection => collection.updateOne(object, updateOperations).then(result => result.result.nModified));
 };
