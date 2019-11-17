@@ -21,7 +21,7 @@ const server = http.createServer(function (req, res) {
     const service = require('./services.js');
 
     // GET Endpoint
-    if (req.method === 'GET' || req.method === 'POST') {
+    if (req.method === 'GET' || req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
         console.log('Request Type:' + req.method + ' Endpoint: ' + reqUrl.pathname);
 
         const route = routes[reqUrl.pathname];
