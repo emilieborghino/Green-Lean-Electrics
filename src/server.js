@@ -10,10 +10,10 @@ const routes = {
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
     ),
-    '/prosumerSignUp': (service,request) => 
+    '/prosumerSignUp': (service, request) =>
         service.insertProsumer(
             getPostParam(url.parse(request.url).query, 'email'),
-            getPostParam(url.parse(request.url).query, 'pwd')
+            getPostParam(url.parse(request.url).query, 'password')
         ),
 };
 
@@ -21,19 +21,24 @@ const server = http.createServer(function (req, res) {
     const reqUrl = url.parse(req.url);
     const service = require('./services.js');
 
-    // GET Endpoint
     if (req.method === 'GET' || req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
         console.log('Request Type:' + req.method + ' Endpoint: ' + reqUrl.pathname);
 
         const route = routes[reqUrl.pathname];
-        const reply = route(service, req);console.log(reply);
         if (route) {
-            writeReply(reply, res);
+            computeReply(route, service, req)
+                .then(reply => writeReply(reply, res))
+                .catch(/* TODO: add an error message */);
         } else {
             // TODO: add an error message
         }
     }
 });
+
+function computeReply(route, service, request) {
+    const reply = route(service, request);
+    return new Promise(resolve => resolve(reply));
+}
 
 function writeReply(response, res) {
     res.statusCode = 200;
@@ -41,36 +46,14 @@ function writeReply(response, res) {
     res.end(JSON.stringify(response));
 }
 
-function getPostParam(query, paramName){
+function getPostParam(query, paramName) {
     var params = query.split('&');
     for (var i = 0; i < params.length; i++) {
-      var data = params[i].split('=');
-        if(data[0] === paramName)
+        var data = params[i].split('=');
+        if (data[0] === paramName)
             return data[1];
     }
     return null;
 }
 
 server.listen(port);
-
-// Data Base
-
-const mongo = require('mongodb');
-const mongourl = "mongodb://localhost:27017";
-
-mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
-    if(err) {
-       console.log(err);
-       process.exit(0);
-    }
-    console.log('database connected!');
-    var dbo = db.db('greenleanelectrics');
-    dbo.createCollection('prosumers', (err, result) => {
-        if(err) {
-           console.log(err);
-           process.exit(0);
-        }
-        console.log('collection created!');
-        db.close();
-    });
-});

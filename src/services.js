@@ -69,7 +69,6 @@ exports.getElectricityConsumption = function (date) {
     };
 };
 
-
 exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption) {
     const windSpeedCoeff = -1;
     const consumptionCoeff = 500;
@@ -85,40 +84,17 @@ exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption
         minPrice
     );
 
-    console.log(consumptionCoeff * electricityConsumption + windSpeedCoeff * Math.log(windSpeed));
-
     return {
         "currentElectricityPrice": price
     };
 };
 
 // DataBase
-const mongo = require('mongodb');
-const mongourl = "mongodb://localhost:27017";
+exports.insertProsumer = function (email, password) {
+    const databaseName = 'greenleanelectrics';
+    const collectionName = 'prosumers';
+    const prosumer = {email, password};
 
-exports.insertProsumer = function (email, pwd){
-    /*console.log("email : " + email);
-    console.log("pwd : " + pwd);*/
-
-    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
-        if(err) {
-           console.log(err);
-           process.exit(0);
-        }
-        var dbo = db.db('greenleanelectrics');
-        var collection = dbo.collection('prosumers');
-        var prosumer = {
-            "email": email,
-            "pwd": pwd
-        };
-        collection.insertOne(prosumer);
-            /*return {
-                "status": true,
-                "message": "inserted record"+response.ops[0]
-            }; 
-            return {
-                "status": false,
-                "message": "Error occurred while inserting"
-            }; */
-    });
-}
+    return require('./mongo.js')
+        .insertOne(undefined, databaseName, collectionName, prosumer);
+};
