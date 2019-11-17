@@ -13,4 +13,5 @@
 | 2019-11-09  | 2       | Implementation of the wind model              |
 | 2019-11-14  | 0.15    | Meeting                                       |
 | 2019-11-15  | 0.15    | Fix price computation                         |
-| 2019-11-15  | 1       | Set up MondoDB server                         |
+| 2019-11-15  | 1       | Set up MongoDB server                         |
+| 2019-11-17  | 3       | Discovring the MongoDB API                    |
