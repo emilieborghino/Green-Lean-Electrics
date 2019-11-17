@@ -10,10 +10,11 @@ const routes = {
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
     ),
-    '/prosumerSignUp': (service,request) => service.insertProsumer(
-        getPostParam('email',request.query),
-        getPostParam('pwd',request.query)
-    ),
+    '/prosumerSignUp': (service,request) => 
+        service.insertProsumer(
+            getPostParam(url.parse(request.url).query, 'email'),
+            getPostParam(url.parse(request.url).query, 'pwd')
+        ),
 };
 
 const server = http.createServer(function (req, res) {
@@ -21,11 +22,11 @@ const server = http.createServer(function (req, res) {
     const service = require('./services.js');
 
     // GET Endpoint
-    if (req.method === 'GET') {
+    if (req.method === 'GET' || req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
         console.log('Request Type:' + req.method + ' Endpoint: ' + reqUrl.pathname);
 
         const route = routes[reqUrl.pathname];
-        const reply = route(service, req);
+        const reply = route(service, req);console.log(reply);
         if (route) {
             writeReply(reply, res);
         } else {
@@ -40,7 +41,7 @@ function writeReply(response, res) {
     res.end(JSON.stringify(response));
 }
 
-function getPostParam(paramName, query){
+function getPostParam(query, paramName){
     var params = query.split('&');
     for (var i = 0; i < params.length; i++) {
       var data = params[i].split('=');

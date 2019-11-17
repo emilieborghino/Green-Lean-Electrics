@@ -93,6 +93,32 @@ exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption
 };
 
 // DataBase
-exports.insertProsumer = function (/*..*/){
+const mongo = require('mongodb');
+const mongourl = "mongodb://localhost:27017";
 
+exports.insertProsumer = function (email, pwd){
+    /*console.log("email : " + email);
+    console.log("pwd : " + pwd);*/
+
+    mongo.connect(mongourl, {useNewUrlParser: true}, (err, db) => {
+        if(err) {
+           console.log(err);
+           process.exit(0);
+        }
+        var dbo = db.db('greenleanelectrics');
+        var collection = dbo.collection('prosumers');
+        var prosumer = {
+            "email": email,
+            "pwd": pwd
+        };
+        collection.insertOne(prosumer);
+            /*return {
+                "status": true,
+                "message": "inserted record"+response.ops[0]
+            }; 
+            return {
+                "status": false,
+                "message": "Error occurred while inserting"
+            }; */
+    });
 }
