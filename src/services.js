@@ -6,6 +6,8 @@ const gaussianFunction = (expectedValue, standardValue, x) => (
     )
 );
 
+const DATABASE_NAME = 'greenleanelectrics';
+
 exports.getWindSpeed = function (date) {
     function floor(x) {
         const maxDecimals = 0;
@@ -31,9 +33,14 @@ exports.getWindSpeed = function (date) {
             * gaussianFunction(0, 8000, dateSinceStartOfYear - point * Math.cos(dateSinceStartOfYear)))
         .reduce((accumulator, currentValue) => accumulator + currentValue);
 
-    return {
-        "windSpeed": floor(windSpeed)
+    const windSpeedAsJson = {
+        windSpeed: floor(windSpeed),
+        date: date
     };
+
+    require('./mongo.js').insertOne(undefined, DATABASE_NAME, 'windSpeed', windSpeedAsJson);
+
+    return windSpeedAsJson;
 };
 
 exports.getElectricityConsumption = function (date) {
@@ -52,7 +59,7 @@ exports.getElectricityConsumption = function (date) {
     const morningConsumption = 21;
     const afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
 
-    return {
+    let electricityConsumption = {
         "electricityConsumption":
             (
                 gaussianFunction(
@@ -67,14 +74,21 @@ exports.getElectricityConsumption = function (date) {
                 ) * afternoonConsumption
             ) * people
     };
+
+    require('./mongo.js').insertOne(undefined, DATABASE_NAME, 'consumption', electricityConsumption);
+
+    return electricityConsumption;
 };
 
-exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption) {
+exports.getCurrentElectricityPrice = function (date) {
     const windSpeedCoeff = -1;
     const consumptionCoeff = 500;
 
     const maxPrice = 2;
     const minPrice = 1;
+
+    const electricityConsumption = exports.getElectricityConsumption(date).electricityConsumption;
+    const windSpeed = exports.getWindSpeed(new Date()).windSpeed;
 
     const price = Math.max(
         Math.min(
@@ -84,14 +98,19 @@ exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption
         minPrice
     );
 
-    return {
-        "currentElectricityPrice": price
+    const priceAsJson = {
+        currentElectricityPrice: price,
+        date: date
     };
+
+    require('./mongo.js').insertOne(undefined, DATABASE_NAME, 'currentPrice', priceAsJson);
+
+    return priceAsJson;
 };
 
 // DataBase
 exports.insertProsumer = function (email, password) {
-    const databaseName = 'greenleanelectrics';
+    const databaseName = DATABASE_NAME;
     const collectionName = 'prosumers';
     const prosumer = {email, password};
 
@@ -100,7 +119,7 @@ exports.insertProsumer = function (email, password) {
 };
 
 exports.connectProsumer = function (email, password) {
-    const databaseName = 'greenleanelectrics';
+    const databaseName = DATABASE_NAME;
     const collectionName = 'prosumers';
 
     const prosumer = {
@@ -119,7 +138,7 @@ exports.connectProsumer = function (email, password) {
 };
 
 exports.disconnectProsumer = function (token) {
-    const databaseName = 'greenleanelectrics';
+    const databaseName = DATABASE_NAME;
     const collectionName = 'prosumers';
     const prosumer = {
         token

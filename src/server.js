@@ -4,12 +4,9 @@ const url = require('url');
 const port = 8080;
 
 const routes = {
-    '/getWindSpeed': (service, request) => service.getWindSpeed(new Date()),
-    '/getElectricityConsumption': (service, request) => service.getElectricityConsumption(new Date()),
-    '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
-        service.getWindSpeed(new Date()).windSpeed,
-        service.getElectricityConsumption(new Date()).electricityConsumption
-    ),
+    '/getWindSpeed': (service) => service.getWindSpeed(new Date()),
+    '/getElectricityConsumption': (service) => service.getElectricityConsumption(new Date()),
+    '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(new Date()),
     '/prosumerSignUp': (service, request) =>
         service.insertProsumer(
             getPostParam(url.parse(request.url).query, 'email'),
