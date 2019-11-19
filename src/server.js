@@ -4,26 +4,34 @@ const url = require('url');
 const port = 8080;
 
 const routes = {
-    '/getWindSpeed': (service, request) => service.getWindSpeed(new Date()),
-    '/getElectricityConsumption': (service, request) => service.getElectricityConsumption(new Date()),
+    //Simulator 
+    '/getWindSpeed': (service, request) => service.getWindSpeed(
+        new Date()
+    ),
+    '/getElectricityConsumption': (service, request) => service.getWholeElectricityConsumption(
+        getParam(url.parse(request.url).query, 'people'),
+        new Date()
+    ),
     '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
         service.getWindSpeed(new Date()).windSpeed,
         service.getElectricityConsumption(new Date()).electricityConsumption
     ),
-    '/prosumerSignUp': (service, request) =>
-        service.insertProsumer(
-            getPostParam(url.parse(request.url).query, 'email'),
-            getPostParam(url.parse(request.url).query, 'password')
-        ),
-    '/prosumerLogin': (service,request) => 
-        service.connectProsumer(
-            getPostParam(url.parse(request.url).query, 'email'),
-            getPostParam(url.parse(request.url).query, 'pwd')
-        ),
-    '/prosumerLogout': (service,request) => 
-        service.disconnectProsumer(
-            getPostParam(url.parse(request.url).query, 'token')
-        ),
+    //Prosumer
+    '/prosumerSignUp': (service, request) => service.insertProsumer(
+        getParam(url.parse(request.url).query, 'email'),
+        getParam(url.parse(request.url).query, 'password')
+    ),
+    '/prosumerLogin': (service,request) => service.connectProsumer(
+        getParam(url.parse(request.url).query, 'email'),
+        getParam(url.parse(request.url).query, 'pwd')
+    ),
+    '/prosumerLogout': (service,request) => service.disconnectProsumer(
+        getParam(url.parse(request.url).query, 'token')
+    ),
+    '/getProsumerElectricityConsumption': (service,request) => service.getProsumerElectricityConsumption(
+        getParam(url.parse(request.url).query, 'token'),
+        new Date(getParam(url.parse(request.url).query, 'date'))
+    ),
 };
 
 const server = http.createServer(function (req, res) {
@@ -55,7 +63,7 @@ function writeReply(response, res) {
     res.end(JSON.stringify(response));
 }
 
-function getPostParam(query, paramName) {
+function getParam(query, paramName) {
     var params = query.split('&');
     for (var i = 0; i < params.length; i++) {
         var data = params[i].split('=');

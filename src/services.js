@@ -36,9 +36,16 @@ exports.getWindSpeed = function (date) {
     };
 };
 
-exports.getElectricityConsumption = function (date) {
-    const people = 10;
+exports.getWholeElectricityConsumption = function (people,date) {
     const dailyConsumptionPerPerson = 27;
+
+    const morningConsumption = 21;
+    const afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
+
+    return getElectricityConsumption(date, morningConsumption, afternoonConsumption, people);
+};
+
+function getElectricityConsumption(date, morningConsumption, afternoonConsumption, people){ //TODO : Check, je pense que cela get la consommation a la seconde près dans la date pas celle du jours, quest ce qu'on veut nous ?
 
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -48,9 +55,6 @@ exports.getElectricityConsumption = function (date) {
 
     const morningTopTimestamp = 11 * 3600;
     const afternoonTopHourTimestamp = 19 * 3600 + 30 * 60;
-
-    const morningConsumption = 21;
-    const afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
 
     return {
         "electricityConsumption":
@@ -67,7 +71,7 @@ exports.getElectricityConsumption = function (date) {
                 ) * afternoonConsumption
             ) * people
     };
-};
+}
 
 exports.getCurrentElectricityPrice = function (windSpeed, electricityConsumption) {
     const windSpeedCoeff = -1;
@@ -137,4 +141,32 @@ exports.disconnectProsumer = function (token) {
 function generateToken () {
     const crypto = require("crypto");
     return crypto.randomBytes(16).toString("hex");
+}
+
+exports.getProsumerElectricityConsumption = function (token, date){
+    const databaseName = 'greenleanelectrics';
+    const collectionName = 'prosumers';
+
+    var dailyConsumptionPerPerson = 27;
+    var morningConsumption = 21;
+    var afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
+
+    const prosumertoken = {
+        token
+    };
+
+    return require('./mongo.js')
+        .find(undefined, databaseName, collectionName, prosumertoken)
+        .then((resultats) => {
+            var changing_value = resultats[0].email.length ;
+
+            if (resultats[0].email.length % 2 == 0)
+                changing_value = -changing_value;
+
+            dailyConsumptionPerPerson += changing_value/8;
+            morningConsumption += changing_value/10;
+
+            return getElectricityConsumption(date, morningConsumption, afternoonConsumption, 1);
+        });
+
 }
