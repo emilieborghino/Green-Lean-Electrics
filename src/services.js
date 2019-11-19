@@ -90,14 +90,14 @@ function getElectricityConsumption(date, morningConsumption, afternoonConsumptio
     return electricityConsumption;
 }
 
-exports.getCurrentElectricityPrice = function (date) {
+exports.getCurrentElectricityPrice = async function (date) {
     const windSpeedCoeff = -1;
     const consumptionCoeff = 500;
 
     const maxPrice = 2;
     const minPrice = 1;
 
-    const electricityConsumption = exports.getWholeElectricityConsumption(date).electricityConsumption;
+    const electricityConsumption = (await exports.getWholeElectricityConsumption(date)).electricityConsumption;
     const windSpeed = exports.getWindSpeed(new Date()).windSpeed;
 
     const price = Math.max(
@@ -185,7 +185,7 @@ exports.getProsumerElectricityConsumption = function (token, date){
         .then((resultats) => {
             var changing_value = resultats[0].email.length ;
 
-            if (resultats[0].email.length % 2 == 0)
+            if (resultats[0].email.length % 2 === 0)
                 changing_value = -changing_value;
 
             dailyConsumptionPerPerson += changing_value/8;
@@ -194,4 +194,4 @@ exports.getProsumerElectricityConsumption = function (token, date){
             return getElectricityConsumption(date, morningConsumption, afternoonConsumption, 1);
         });
 
-}
+};
