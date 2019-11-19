@@ -5,17 +5,14 @@ const port = 8080;
 
 const routes = {
     //Simulator 
-    '/getWindSpeed': (service, request) => service.getWindSpeed(
+    '/getWindSpeed': (service) => service.getWindSpeed(
         new Date()
     ),
-    '/getElectricityConsumption': (service, request) => service.getWholeElectricityConsumption(
+    '/getElectricityConsumption': (service) => service.getWholeElectricityConsumption(
         getParam(url.parse(request.url).query, 'people'),
         new Date()
     ),
-    '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
-        service.getWindSpeed(new Date()).windSpeed,
-        service.getElectricityConsumption(new Date()).electricityConsumption
-    ),
+    '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(new Date()),
     //Prosumer
     '/prosumerSignUp': (service, request) => service.insertProsumer(
         getParam(url.parse(request.url).query, 'email'),
