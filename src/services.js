@@ -43,14 +43,19 @@ exports.getWindSpeed = function (date) {
     return windSpeedAsJson;
 };
 
-exports.getWholeElectricityConsumption = function (people, date) {
+exports.getWholeElectricityConsumption = function (date) {
 
     const dailyConsumptionPerPerson = 27;
 
     const morningConsumption = 21;
     const afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
 
-    return getElectricityConsumption(date, morningConsumption, afternoonConsumption, people);
+    const databaseName = DATABASE_NAME;
+    const collectionName = 'prosumers';
+    return require('./mongo.js').count(undefined, databaseName, collectionName).then((count) => {
+        return getElectricityConsumption(date, morningConsumption, afternoonConsumption, count);
+    });
+
 };
 
 function getElectricityConsumption(date, morningConsumption, afternoonConsumption, people){ //TODO : Check, je pense que cela get la consommation a la seconde près dans la date pas celle du jours, quest ce qu'on veut nous ?
@@ -85,14 +90,14 @@ function getElectricityConsumption(date, morningConsumption, afternoonConsumptio
     return electricityConsumption;
 };
 
-exports.getCurrentElectricityPrice = function (people, date) {
+exports.getCurrentElectricityPrice = function (date) {
     const windSpeedCoeff = -1;
     const consumptionCoeff = 500;
 
     const maxPrice = 2;
     const minPrice = 1;
 
-    const electricityConsumption = exports.getWholeElectricityConsumption(people, date).electricityConsumption;
+    const electricityConsumption = exports.getWholeElectricityConsumption(date).electricityConsumption;
     const windSpeed = exports.getWindSpeed(new Date()).windSpeed;
 
     const price = Math.max(

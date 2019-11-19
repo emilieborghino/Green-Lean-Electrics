@@ -38,6 +38,10 @@ exports.find = function (url, databaseName, collectionName, predicate) {
     return operate(url, databaseName, collectionName, collection => collection.find(predicate).toArray());
 };
 
+exports.count = function (url, databaseName, collectionName) {
+    return operate(url, databaseName, collectionName, collection => collection.count());
+};
+
 exports.updateOne = function (url, databaseName, collectionName, object, updateOperations) {
     return operate(url, databaseName, collectionName, collection => collection.updateOne(object, updateOperations).then(result => result.result.nModified));
 };
