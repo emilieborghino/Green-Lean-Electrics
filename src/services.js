@@ -83,7 +83,7 @@ function getElectricityConsumption(date, morningConsumption, afternoonConsumptio
     require('./mongo.js').insertOne(undefined, DATABASE_NAME, 'consumption', electricityConsumption);
 
     return electricityConsumption;
-};
+}
 
 exports.getCurrentElectricityPrice = function (people, date) {
     const windSpeedCoeff = -1;

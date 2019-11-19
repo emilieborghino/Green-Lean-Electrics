@@ -9,28 +9,28 @@ const routes = {
         new Date()
     ),
     '/getElectricityConsumption': (service, request) => service.getWholeElectricityConsumption(
-        getParam(url.parse(request.url).query, 'people'),
+        getParam(request, 'people'),
         new Date()
     ),
     '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
-        getParam(url.parse(request.url).query, 'people'),
+        getParam(request, 'people'),
         new Date()
     ),
     //Prosumer
     '/prosumerSignUp': (service, request) => service.insertProsumer(
-        getParam(url.parse(request.url).query, 'email'),
-        getParam(url.parse(request.url).query, 'password')
+        getParam(request, 'email'),
+        getParam(request, 'password')
     ),
     '/prosumerLogin': (service,request) => service.connectProsumer(
-        getParam(url.parse(request.url).query, 'email'),
-        getParam(url.parse(request.url).query, 'pwd')
+        getParam(request, 'email'),
+        getParam(request, 'pwd')
     ),
     '/prosumerLogout': (service,request) => service.disconnectProsumer(
-        getParam(url.parse(request.url).query, 'token')
+        getParam(request, 'token')
     ),
     '/getProsumerElectricityConsumption': (service,request) => service.getProsumerElectricityConsumption(
-        getParam(url.parse(request.url).query, 'token'),
-        new Date(getParam(url.parse(request.url).query, 'date'))
+        getParam(request, 'token'),
+        new Date(getParam(request, 'date'))
     ),
 };
 
@@ -63,7 +63,10 @@ function writeReply(response, res) {
     res.end(JSON.stringify(response));
 }
 
-function getParam(query, paramName) {
+function getParam(request, paramName) {
+    var query = url.parse(request.url).query;
+    if (!query) return null;
+
     var params = query.split('&');
     for (var i = 0; i < params.length; i++) {
         var data = params[i].split('=');
