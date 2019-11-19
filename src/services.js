@@ -43,7 +43,8 @@ exports.getWindSpeed = function (date) {
     return windSpeedAsJson;
 };
 
-exports.getWholeElectricityConsumption = function (people,date) {
+exports.getWholeElectricityConsumption = function (people, date) {
+
     const dailyConsumptionPerPerson = 27;
 
     const morningConsumption = 21;
@@ -62,9 +63,6 @@ function getElectricityConsumption(date, morningConsumption, afternoonConsumptio
 
     const morningTopTimestamp = 11 * 3600;
     const afternoonTopHourTimestamp = 19 * 3600 + 30 * 60;
-
-    const morningConsumption = 21;
-    const afternoonConsumption = dailyConsumptionPerPerson - morningConsumption;
 
     let electricityConsumption = {
         "electricityConsumption":
@@ -87,14 +85,14 @@ function getElectricityConsumption(date, morningConsumption, afternoonConsumptio
     return electricityConsumption;
 };
 
-exports.getCurrentElectricityPrice = function (date) {
+exports.getCurrentElectricityPrice = function (people, date) {
     const windSpeedCoeff = -1;
     const consumptionCoeff = 500;
 
     const maxPrice = 2;
     const minPrice = 1;
 
-    const electricityConsumption = exports.getElectricityConsumption(date).electricityConsumption;
+    const electricityConsumption = exports.getWholeElectricityConsumption(people, date).electricityConsumption;
     const windSpeed = exports.getWindSpeed(new Date()).windSpeed;
 
     const price = Math.max(

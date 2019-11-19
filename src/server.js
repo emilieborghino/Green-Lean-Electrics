@@ -8,11 +8,14 @@ const routes = {
     '/getWindSpeed': (service) => service.getWindSpeed(
         new Date()
     ),
-    '/getElectricityConsumption': (service) => service.getWholeElectricityConsumption(
+    '/getElectricityConsumption': (service, request) => service.getWholeElectricityConsumption(
         getParam(url.parse(request.url).query, 'people'),
         new Date()
     ),
-    '/getCurrentElectricityPrice': (service) => service.getCurrentElectricityPrice(new Date()),
+    '/getCurrentElectricityPrice': (service, request) => service.getCurrentElectricityPrice(
+        getParam(url.parse(request.url).query, 'people'),
+        new Date()
+    ),
     //Prosumer
     '/prosumerSignUp': (service, request) => service.insertProsumer(
         getParam(url.parse(request.url).query, 'email'),
